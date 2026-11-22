@@ -387,13 +387,24 @@ export function createOverviewView(ctx) {
       </div>
     `;
 
-    // Draw 1h KPI sparklines
-    const pts = Array.isArray(spark1h) && spark1h.length >= 2 ? spark1h : [
-      { cpuPct: cpu.processPct, elMeanMs: el.meanMs, httpP95Ms: http.p95Ms },
-      { cpuPct: cpu.processPct, elMeanMs: el.meanMs, httpP95Ms: http.p95Ms }
+    // Draw 1h / live KPI sparklines
+    if (!Array.isArray(data.spark1h) || data.spark1h.length === 0) {
+      data.spark1h = [{ cpuPct: cpu.processPct, elMeanMs: el.meanMs, httpP95Ms: http.p95Ms }];
+    }
+    drawKpiSparks();
+  }
+
+  function drawKpiSparks() {
+    if (!rootEl || !data) return;
+    const s = data.snapshot;
+    const raw = Array.isArray(data.spark1h) ? data.spark1h : [];
+    const pts = raw.length >= 2 ? raw : [
+      raw[0] || { cpuPct: s.cpu.processPct, elMeanMs: s.eventLoop.meanMs, httpP95Ms: s.http.p95Ms },
+      { cpuPct: s.cpu.processPct, elMeanMs: s.eventLoop.meanMs, httpP95Ms: s.http.p95Ms }
     ];
+    const em = getComputedStyle(document.documentElement).getPropertyValue('--emerald').trim() || '#10b981';
     drawSparkline(rootEl.querySelector('#spark-cpu'), pts.map(p => p.cpuPct), null);
-    drawSparkline(rootEl.querySelector('#spark-el'), pts.map(p => p.elMeanMs), getComputedStyle(document.documentElement).getPropertyValue('--emerald').trim() || '#10b981');
+    drawSparkline(rootEl.querySelector('#spark-el'), pts.map(p => p.elMeanMs), em);
     drawSparkline(rootEl.querySelector('#spark-http'), pts.map(p => p.httpP95Ms), null);
   }
 
@@ -427,6 +438,17 @@ export function createOverviewView(ctx) {
     setTxt('#tel-reqs', String(s.runtime.activeRequests));
     setTxt('#tel-calls', `${(s.domain && s.domain.activeLiveCalls) || 0} active`);
     setTxt('#tel-queue', `${(s.domain && s.domain.mobile && s.domain.mobile.pendingProactive) || 0} pending`);
+
+    if (!Array.isArray(data.spark1h)) data.spark1h = [];
+    data.spark1h.push({
+      cpuPct: s.cpu.processPct,
+      elMeanMs: s.eventLoop.meanMs,
+      httpP95Ms: s.http.p95Ms
+    });
+    if (data.spark1h.length > 60) {
+      data.spark1h.splice(0, data.spark1h.length - 60);
+    }
+    drawKpiSparks();
   }
 
   async function handleClick(ev) {
