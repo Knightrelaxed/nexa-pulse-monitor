@@ -93,8 +93,8 @@ export function createOverviewView(ctx) {
               <span>Memory</span>
               <span class="pill mono">Node RSS</span>
             </div>
-            <div id="kpi-mem-val" class="kpi-value mono">${mem.rssMb} MiB</div>
-            <div id="kpi-mem-sub" class="kpi-sub mono">Heap ${mem.heapUsedMb}/${mem.heapTotalMb}M (${mem.heapPct}%) · ${mem.vpsAvailMb}M free</div>
+            <div id="kpi-mem-val" class="kpi-value mono">${Math.round(mem.rssMb)} MiB</div>
+            <div id="kpi-mem-sub" class="kpi-sub mono">Heap ${Math.round(mem.heapUsedMb)}/${Math.round(mem.heapTotalMb)}M (${Math.round(mem.heapPct)}%) · ${Math.round(mem.vpsAvailMb)}M free</div>
             <div class="mem-bar-wrap">
               <div class="mem-bar-track">
                 <progress id="kpi-mem-fill" class="meter meter-lg" max="100" value="${memPctOfMax}"></progress>
@@ -414,8 +414,8 @@ export function createOverviewView(ctx) {
     setTxt('#ov-updated', 'Live · updated just now');
     setTxt('#kpi-cpu-val', `${s.cpu.processPct}%`);
     setTxt('#kpi-cpu-sub', `Load ${(s.cpu.loadAvg || [0, 0]).slice(0, 2).join(', ')} · Host ${s.cpu.vpsPct}%`);
-    setTxt('#kpi-mem-val', `${mem.rssMb} MiB`);
-    setTxt('#kpi-mem-sub', `Heap ${mem.heapUsedMb}/${mem.heapTotalMb}M (${mem.heapPct}%) · ${mem.vpsAvailMb}M free`);
+    setTxt('#kpi-mem-val', `${Math.round(mem.rssMb)} MiB`);
+    setTxt('#kpi-mem-sub', `Heap ${Math.round(mem.heapUsedMb)}/${Math.round(mem.heapTotalMb)}M (${Math.round(mem.heapPct)}%) · ${Math.round(mem.vpsAvailMb)}M free`);
     const fill = rootEl.querySelector('#kpi-mem-fill');
     if (fill) fill.value = Math.min(100, Math.round((mem.rssMb / 420) * 100));
     setTxt('#kpi-el-val', `${s.eventLoop.meanMs} ms`);
