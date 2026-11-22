@@ -45,6 +45,17 @@ Verifies:
 
 ---
 
+## Documentation
+
+Dokumentasi arsitektur lengkap tersedia di direktori [`docs/`](./docs/README.md):
+- [System Architecture & VPS Infrastructure](./docs/01-SYSTEM-ARCHITECTURE.md)
+- [Connections, REST API & Binary Wire Protocols](./docs/02-CONNECTION-AND-PROTOCOLS.md)
+- [UI/UX Design System & Screen Specifications](./docs/03-UI-UX-DESIGN-SYSTEM.md)
+- [Security Hardening & Threat Model](./docs/04-SECURITY-HARDENING.md)
+- [Operations, Deployment & Troubleshooting Runbook](./docs/05-OPERATIONS-AND-DEPLOYMENT.md)
+
+---
+
 ## Production Serving (Caddy)
 
-Caddy serves static files from `/opt/nexa/pulse-monitor` at `/monitor/*` with strict CSP, and reverse-proxies `/monitor/api/*` and `/monitor/ws/metrics` to `127.0.0.1:3000` (`nexa-server`), while `/io/logs` routes directly to the `nexa-io` Go sidecar.
+Caddy serves static files from `/opt/nexa/nexa-pulse-monitor` at `/monitor/*` with strict CSP, and reverse-proxies `/monitor/api/*` and `/monitor/ws/metrics` to `127.0.0.1:3000` (`nexa-server`), while `/io/logs` routes directly to the `nexa-io` Go sidecar via `/run/nexa-log.sock`.
